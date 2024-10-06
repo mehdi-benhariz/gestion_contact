@@ -1,6 +1,6 @@
 import 'package:contact_gesion/src/contact/models.dart';
 import 'package:contact_gesion/src/helpers/database_helper.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContactService {
   final DatabaseHelper _dbHelper = DatabaseHelper();
@@ -24,8 +24,16 @@ class ContactService {
 
   // Simulate calling a contact
   Future<void> callContact(Contact contact) async {
-    await FlutterPhoneDirectCaller.callNumber("+21622232654");
+    try {
+      print('Calling ${contact.numero}');
+      Uri uri = Uri(scheme: 'tel', path: "22232654");
 
+      // Uri uri = Uri(scheme: 'tel', path: contact.numero);
+      await launchUrl(uri);
+      // await launchUrl(contact.numero as Uri);
+    } catch (e) {
+      print('Error calling ${contact.numero}: $e');
+    }
     print('Calling ${contact.numero}');
     // var url = Uri.parse("tel:+21622232654");
     // if (await canLaunchUrl(url)) {
