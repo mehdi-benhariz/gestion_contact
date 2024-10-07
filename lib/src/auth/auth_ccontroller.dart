@@ -6,9 +6,8 @@ class AuthController {
   AuthController(this._authService);
 
   Future<bool> login(String username, String password) async {
-    if (username.isEmpty || password.isEmpty) {
-      return false;
-    }
+    if (username.isEmpty || password.isEmpty) return false;
+
     return await _authService.login(username, password);
   }
 

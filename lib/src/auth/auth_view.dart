@@ -22,7 +22,7 @@ class _AuthScreenState extends State<AuthScreen> {
       bool success = await widget.controller.login(_username, _password);
       if (success) {
         print("Login success");
-        context.go('/welcome', extra: _username);
+        // context.go('/welcome', extra: _username);
         context.go('/contacts', extra: _username);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -4,6 +4,7 @@ import 'package:contact_gesion/src/auth/auth_view.dart';
 import 'package:contact_gesion/src/contact/contact_controller.dart';
 import 'package:contact_gesion/src/contact/contact_view.dart';
 import 'package:contact_gesion/src/welcome/welcome_screen.dart';
+import 'package:contact_gesion/src/splash_screen.dart'; // Import the splash screen
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,6 +13,8 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -32,6 +35,10 @@ class _MyAppState extends State<MyApp> {
     _router = GoRouter(
       routes: [
         GoRoute(
+          path: '/splash', // Splash screen route
+          builder: (context, state) => SplashScreen(),
+        ),
+        GoRoute(
           path: '/',
           builder: (context, state) => AuthScreen(_authController),
         ),
@@ -46,17 +53,16 @@ class _MyAppState extends State<MyApp> {
           path: '/contacts',
           builder: (context, state) => ContactHomePage(
             controller: _contactController,
+            authController: _authController,
           ),
         ),
       ],
-      redirect: (BuildContext context, GoRouterState state) async {
-        final storedUser = await _authController.getStoredUser();
-        if (storedUser != null && state.location == '/') {
-          return '/welcome';
-        }
-        return null;
-      },
     );
+
+    // Show splash screen first
+    Future.delayed(Duration.zero, () {
+      _router.go('/splash');
+    });
   }
 
   @override

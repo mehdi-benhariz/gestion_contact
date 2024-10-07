@@ -1,9 +1,13 @@
+import 'package:contact_gesion/src/auth/auth_ccontroller.dart';
 import 'package:contact_gesion/src/contact/models.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'contact_controller.dart';
 
 class ContactHomePage extends StatelessWidget {
   final ContactController controller;
+  final AuthController authController;
+
   final TextEditingController _searchController = TextEditingController();
   ContactView() {}
 
@@ -11,11 +15,34 @@ class ContactHomePage extends StatelessWidget {
     controller.searchContacts(_searchController.text);
   }
 
-  ContactHomePage({Key? key, required this.controller}) : super(key: key) {
+  ContactHomePage(
+      {Key? key, required this.controller, required this.authController})
+      : super(key: key) {
     _searchController.addListener(_onSearchChanged);
   }
-  void _deleteContact(Contact contact) {
-    controller.removeContact(contact);
+  void _deleteContact(Contact contact, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Confirm Delete'),
+          content: Text('Are you sure you want to delete this contact?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                controller.removeContact(contact);
+                Navigator.pop(context);
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _updateContact(Contact contact, BuildContext context) {
@@ -74,6 +101,40 @@ class ContactHomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Contacts'),
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.contacts),
+              title: Text('Contact'),
+              onTap: () {
+                context.go('/home');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Logout'),
+              onTap: () async {
+                await authController.logout();
+                context.go('/');
+              },
+            ),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           Padding(
@@ -102,16 +163,19 @@ class ContactHomePage extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            onPressed: () => _deleteContact(contact),
+                            onPressed: () => _deleteContact(contact, context),
                             icon: Icon(Icons.delete),
+                            color: Colors.red,
                           ),
                           IconButton(
                             onPressed: () => _callContact(contact),
                             icon: Icon(Icons.call),
+                            color: Colors.green,
                           ),
                           IconButton(
                             onPressed: () => _updateContact(contact, context),
                             icon: Icon(Icons.update),
+                            color: Colors.yellow,
                           ),
                         ],
                       ),

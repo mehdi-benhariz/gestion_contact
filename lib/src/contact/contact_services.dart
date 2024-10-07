@@ -26,7 +26,7 @@ class ContactService {
   Future<void> callContact(Contact contact) async {
     try {
       print('Calling ${contact.numero}');
-      Uri uri = Uri(scheme: 'tel', path: "22232654");
+      Uri uri = Uri(scheme: 'tel', path: contact.numero);
 
       // Uri uri = Uri(scheme: 'tel', path: contact.numero);
       await launchUrl(uri);
